@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-// const { post } = require('../routes');
 
 const postImgSchema = mongoose.Schema({
   post: {
@@ -11,10 +10,14 @@ const postImgSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  preview: {
-    type: Boolean,
-    required: true
+  description: {
+    type: String,
+    required: false
   }
+  // preview: {
+  //   type: Boolean,
+  //   required: true
+  // }
 }, {
   timestamps: true
 })
