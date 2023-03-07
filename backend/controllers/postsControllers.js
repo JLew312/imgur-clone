@@ -78,31 +78,44 @@ const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find();
   const images = await PostImg.find();
 
-  // let imageInfo = [];
-  // images.forEach(image => {
-  //   imageInfo.push({
-  //     post: image.post,
-  //     image: image.url
-  //   })
-  // })
 
-  // const titles =
-
-  let allPosts = [];
+  // WHY DOESN'T THIS WORK???
+  let imageInfo = [];
   images.forEach(image => {
-
-    posts.forEach(post => {
-      allPosts.push({
-        imagePost: image.post,
-        postId: post._id,
-        image: image.url,
-        title: post.title
-      })
+    imageInfo.push({
+      post: image.post,
+      image: image.url
     })
   })
 
+  let withTitles = [];
+  imageInfo.forEach(async image => {
+    let title = await Post.findById(image.post);
+
+    withTitles.push({
+      image: image.url,
+      title: title
+    });
+  })
+
+  // let allPosts = [];
+  // for (let i = 0; i < images.length; i++) {
+  //   let image = images[i];
+
+  //   for (let j = i + 1; j < posts.length; j++) {
+  //     let post = posts[j];
+
+  //     if (image.post === post._id) {
+  //       allPosts.push({
+  //         image: image.url,
+  //         title: post.title
+  //       })
+  //     }
+  //   }
+  // }
+
   res.status(200).json({
-    posts: allPosts
+    posts: withTitles
   })
 })
 
