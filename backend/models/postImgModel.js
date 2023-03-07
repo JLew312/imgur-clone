@@ -19,4 +19,4 @@ const postImgSchema = mongoose.Schema({
   timestamps: true
 })
 
-module.exports = mongoose.Model('PostImg', postImgSchema);
+module.exports = mongoose.model('PostImg', postImgSchema);
