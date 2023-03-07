@@ -1,41 +1,45 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 const Post = require('../models/postModel');
 const User = require('../models/userModel');
 const PostImg = require('../models/postImgModel');
 
+
 // @desc    Create/Return new post
 // @route   POST api/posts
 // @access  Public
 const createPost = asyncHandler(async (req, res) => {
-  const { title, text } = req.body;
+  const { title, url, description } = req.body;
   const user = await User.findById(req.user.id);
 
-  if (!title) {
+  if (!title || !url) {
     res.status(400);
     throw new Error("Please add all required fields.");
   }
 
-  const post = await Post.create({
+  const newPost = await Post.create({
     user: user.id,
-    title,
-    text
+    title
   })
 
-  const poster = await User.findById(post.user._id)
+  const poster = await User.findById(newPost.user._id)
 
-  if (post) {
+  const myPost = await Post.findById(newPost._id);
+  const postImg = await PostImg.create({
+    post: myPost,
+    url,
+    description
+  })
+
+  if (newPost) {
     res.status(201).json({
-      _id: post.id,
-      // this is going to return me current user info
-      // NOT the posters info
+      _id: newPost.id,
       posterId: poster.id,
       poster: poster.username,
-      title: post.title,
-      text: post.text,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
+      title: newPost.title,
+      image: postImg.url,
+      description: postImg.description,
+      createdAt: newPost.createdAt,
+      updatedAt: newPost.updatedAt,
     })
   } else {
     res.status(400);
@@ -50,7 +54,7 @@ const createPost = asyncHandler(async (req, res) => {
 const getPostById = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id);
   const poster = await User.findById(post.user._id);
-  // const image = await PostImg.findById()
+  const postImg = await PostImg.findOne({post});
 
   if (post) {
     res.status(200).json({
@@ -58,6 +62,8 @@ const getPostById = asyncHandler(async (req, res) => {
       posterId: poster._id,
       poster: poster.username,
       title: post.title,
+      image: postImg.url,
+      description: postImg.description
     })
   } else {
     res.status(400);
@@ -70,9 +76,33 @@ const getPostById = asyncHandler(async (req, res) => {
 // @access  Public
 const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find();
+  const images = await PostImg.find();
+
+  // let imageInfo = [];
+  // images.forEach(image => {
+  //   imageInfo.push({
+  //     post: image.post,
+  //     image: image.url
+  //   })
+  // })
+
+  // const titles =
+
+  let allPosts = [];
+  images.forEach(image => {
+
+    posts.forEach(post => {
+      allPosts.push({
+        imagePost: image.post,
+        postId: post._id,
+        image: image.url,
+        title: post.title
+      })
+    })
+  })
 
   res.status(200).json({
-    posts
+    posts: allPosts
   })
 })
 
