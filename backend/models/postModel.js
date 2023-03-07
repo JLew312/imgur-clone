@@ -13,16 +13,16 @@ const postSchema = mongoose.Schema({
   text: {
     type: String
   },
-  views: {
-    type: Number,
-    required: true
-  },
-  votes: {
-    type: Number,
-    required: true
-  }
+  // views: {
+  //   type: Number,
+  //   required: true
+  // },
+  // votes: {
+  //   type: Number,
+  //   required: true
+  // }
 }, {
   timestamps: true
 })
 
-module.exports = mongoose.Model('Post', postSchema);
+module.exports = mongoose.model('Post', postSchema);
