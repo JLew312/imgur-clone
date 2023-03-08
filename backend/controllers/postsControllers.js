@@ -85,13 +85,13 @@ const getAllPosts = asyncHandler(async (req, res) => {
 
       if ((post._id).valueOf() === (image.post).valueOf()) {
         imgInfo.push({
+          id: post._id,
           title: post.title,
-          image: image.url
+          image: image.url,
         })
       }
     })
   })
-
 
   res.status(200).json({
     imgInfo

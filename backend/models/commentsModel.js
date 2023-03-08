@@ -6,16 +6,21 @@ const commentSchema = mongoose.Schema({
     required: true,
     ref: 'User'
   },
+  post: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Post'
+  },
   text: {
     type: String,
     required: [true, 'Please type comment']
   },
-  votes: {
-    type: Number,
-    required: true
-  }
+  // votes: {
+  //   type: Number,
+  //   required: true
+  // }
 }, {
   timestamps: true
 })
 
-module.exports = mongoose.Model('Comment', commentSchema);
+module.exports = mongoose.model('Comment', commentSchema);
