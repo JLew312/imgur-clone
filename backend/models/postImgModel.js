@@ -6,7 +6,7 @@ const postImgSchema = mongoose.Schema({
     required: true,
     ref: 'Post'
   },
-  url: {
+  image: {
     type: String,
     required: true
   },
