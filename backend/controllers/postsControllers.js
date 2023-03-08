@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const Post = require('../models/postModel');
 const User = require('../models/userModel');
 const PostImg = require('../models/postImgModel');
+const Comment = require('../models/commentsModel');
 
 
 // @desc    Create/Return new post
@@ -55,6 +56,7 @@ const getPostById = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id);
   const poster = await User.findById(post.user._id);
   const postImg = await PostImg.findOne({post});
+  const comments = await Comment.find({post})
 
   if (post) {
     res.status(200).json({
@@ -63,7 +65,11 @@ const getPostById = asyncHandler(async (req, res) => {
       poster: poster.username,
       title: post.title,
       image: postImg.url,
-      description: postImg.description
+      description: postImg.description,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      'total comments': comments.length,
+      comments: comments
     })
   } else {
     res.status(400);
@@ -77,20 +83,41 @@ const getPostById = asyncHandler(async (req, res) => {
 const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find();
   const images = await PostImg.find();
+  const comments = await Comment.find()
 
   let imgInfo = [];
   images.forEach(async image => {
 
     posts.forEach(async post => {
+      // const comments = await Comment.find({post})
+      // console.log(comments);
+
+      // let commentsCount = comments.length;
 
       if ((post._id).valueOf() === (image.post).valueOf()) {
+
         imgInfo.push({
           id: post._id,
           title: post.title,
           image: image.url,
+          // "total comments": commentsCount
         })
       }
     })
+  })
+
+
+  let commentArr = [];
+  imgInfo.forEach(updated => {
+
+    for (let i = 0; i < comments.length; i++) {
+      let comment = comments[i];
+
+      if ((updated.id).valueOf() === (comment.post).valueOf()) {
+        commentArr.push(comment)
+      }
+    }
+    updated.commentCount = commentArr.length;
   })
 
   res.status(200).json({
