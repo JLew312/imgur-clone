@@ -6,7 +6,7 @@ const Comment = require('../models/commentsModel');
 
 
 // @desc    Create/Return new post
-// @route   POST api/posts
+// @route   POST api/gallery
 // @access  Public
 const createPost = asyncHandler(async (req, res) => {
   const { title, image, description } = req.body;
@@ -50,7 +50,7 @@ const createPost = asyncHandler(async (req, res) => {
 
 
 // @desc    Get post info by id
-// @route   GET api/posts/:id
+// @route   GET api/gallery/:id
 // @access  Public
 const getPostById = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id);
@@ -79,7 +79,7 @@ const getPostById = asyncHandler(async (req, res) => {
 
 
 // @desc    Edit post info by id
-// @route   PUT api/posts/:id
+// @route   PUT api/gallery/:id
 // @access  Public
 const editPostById = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id);
@@ -125,11 +125,11 @@ const editPostById = asyncHandler(async (req, res) => {
 
 
 // @desc    Get all posts
-// @route   GET api/posts
+// @route   GET api/gallery
 // @access  Public
 const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find();
-  const images = await PostImg.find();
+  const images = await PostImg.findOne();
   const comments = await Comment.find()
 
   let imgInfo = [];
@@ -166,7 +166,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
 
 
 // @desc    Delete a comment
-// @route   POST api/posts/:postId/comments/:commentId
+// @route   POST api/gallery/:postId/comments/:commentId
 // @access  Public
 const deletePostById = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id);
