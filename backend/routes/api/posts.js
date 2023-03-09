@@ -5,14 +5,15 @@ const { createPost,
         getAllPosts,
         deletePostById} = require('../../controllers/postsControllers');
 
-const { protect } = require('../../middleware/authMiddleware');
+const { protect,
+        belongsToUser } = require('../../middleware/authMiddleware');
 
 const router = express.Router();
 
 router.post('/', protect, createPost);
 router.get('/:id', getPostById);
-router.put('/:id', protect, editPostById);
+router.put('/:id', protect, belongsToUser, editPostById);
 router.get('/', getAllPosts);
-router.delete('/:id', protect, deletePostById);
+router.delete('/:id', protect, belongsToUser, deletePostById);
 
 module.exports = router;

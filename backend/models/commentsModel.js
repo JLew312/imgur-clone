@@ -14,11 +14,7 @@ const commentSchema = mongoose.Schema({
   text: {
     type: String,
     required: [true, 'Please type comment']
-  },
-  // votes: {
-  //   type: Number,
-  //   required: true
-  // }
+  }
 }, {
   timestamps: true
 })

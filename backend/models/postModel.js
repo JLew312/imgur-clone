@@ -9,15 +9,7 @@ const postSchema = mongoose.Schema({
   title: {
     type: String,
     required: [true, 'Please add post title']
-  },
-  // views: {
-  //   type: Number,
-  //   required: true
-  // },
-  // votes: {
-  //   type: Number,
-  //   required: true
-  // }
+  }
 }, {
   timestamps: true
 })
