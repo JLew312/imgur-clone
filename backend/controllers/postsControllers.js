@@ -3,6 +3,8 @@ const Post = require('../models/postModel');
 const User = require('../models/userModel');
 const PostImg = require('../models/postImgModel');
 const Comment = require('../models/commentsModel');
+const Favorite = require('../models/favoriteModel');
+
 
 
 // @desc    Create/Return new post
@@ -129,7 +131,7 @@ const editPostById = asyncHandler(async (req, res) => {
 // @access  Public
 const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find();
-  const images = await PostImg.findOne();
+  const images = await PostImg.find();
   const comments = await Comment.find()
 
   let imgInfo = [];
@@ -165,14 +167,38 @@ const getAllPosts = asyncHandler(async (req, res) => {
 })
 
 
+// @desc    Add user/post record to Favorites
+// @route   PUT api/gallery/:id/favorite
+// @access  Public
+const favoritePost = asyncHandler(async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  const user = await User.findById(req.user._id);
+  const favorite = await Favorite.findOne({ user: user._id, post: post._id });
+
+  if (!favorite) {
+    await Favorite.create({
+      user: user._id,
+      post: post._id
+    })
+
+    res.status(201).json({
+      message: "Post added to favorites!"
+    })
+  } else {
+    await Favorite.deleteOne({ user: user._id, post: post.id })
+
+    res.status(200).json({
+      message: "Post removed from favorites!"
+    })
+  }
+})
+
+
 // @desc    Delete a comment
 // @route   POST api/gallery/:postId/comments/:commentId
 // @access  Public
 const deletePostById = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id);
-  // const postImg = await PostImg.find({post});
-  // const comments = await Comment.find({post});
-
 
   if (!post) {
     res.status(400);
@@ -195,5 +221,6 @@ module.exports = {
   getPostById,
   editPostById,
   getAllPosts,
+  favoritePost,
   deletePostById
 }
