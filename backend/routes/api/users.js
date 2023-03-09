@@ -1,7 +1,7 @@
 const express = require('express');
 const { registerUser,
         loginUser,
-        getUser,
+        getUserInfo,
         getUserPosts,
         getUserComments,
         getUserFavorites } = require('../../controllers/usersControllers');
@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post('/', registerUser);
 router.post('/login', loginUser);
-router.get('/me', protect, getUser);
+router.get('/:id', protect, getUserInfo);
 router.get('/:id/posts', getUserPosts);
 router.get('/:id/comments', protect, getUserComments);
 router.get('/:id/favorites', protect, getUserFavorites);
