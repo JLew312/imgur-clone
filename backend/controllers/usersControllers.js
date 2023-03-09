@@ -12,7 +12,7 @@ const Favorite = require('../models/favoriteModel');
 // @route   POST api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, about } = req.body;
 
   if (!username || ! email || !password) {
     res.status(400);
@@ -35,7 +35,8 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     username,
     email,
-    password: hashedPassword
+    password: hashedPassword,
+    about
   })
 
   if (user) {
@@ -43,6 +44,7 @@ const registerUser = asyncHandler(async (req, res) => {
       _id: user.id,
       username: user.username,
       email: user.email,
+      about: user.about,
       token: generateToken(user._id)
     })
   } else {
@@ -77,13 +79,14 @@ const loginUser = asyncHandler(async (req, res) => {
 // @desc    View user info
 // @route   POST api/users
 // @access  Private
-const getUser = asyncHandler(async (req, res) => {
-  const { _id, username, email } = await User.findById(req.user.id);
+const getUserInfo = asyncHandler(async (req, res) => {
+  const { _id, username, email, about } = await User.findById(req.params.id);
 
   res.status(200).json({
     id: _id,
     username,
-    email
+    email,
+    about
   })
 })
 
@@ -173,7 +176,7 @@ const getUserFavorites = asyncHandler(async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
-  getUser,
+  getUserInfo,
   getUserPosts,
   getUserComments,
   getUserFavorites
