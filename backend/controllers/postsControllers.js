@@ -98,10 +98,12 @@ const editPostById = asyncHandler(async (req, res) => {
         image: "Image is required"
       }
     })
-    console.log(post)
+
   } else {
     if (post) {
       await Post.updateOne({_id: post._id}, req.body);
+      await PostImg.updateMany({post: post._id}, req.body);
+
       res.status(200).json({
         id: post._id,
         posterId: poster._id,

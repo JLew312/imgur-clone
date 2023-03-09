@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
+const Post = require('../models/postModel');
 
 const protect = asyncHandler(async (req, res, next) => {
   let token;
@@ -33,11 +34,24 @@ const protect = asyncHandler(async (req, res, next) => {
 
 
 const belongsToUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  const post = await Post.findById(req.params.id);
 
+  if (!user) {
+    res.status(400);
+    throw new Error('Insufficient permissions.')
+  }
+
+  if ((post.user).valueOf() !== (user._id).valueOf()) {
+    res.status(400);
+    throw new Error('Insufficient permissions');
+  } else {
+    next();
+  }
 })
-
 
 
 module.exports = {
   protect,
+  belongsToUser
 }
