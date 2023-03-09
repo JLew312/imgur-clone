@@ -5,6 +5,7 @@ const User = require('../models/userModel');
 const Post = require('../models/postModel');
 const PostImg = require('../models/postImgModel');
 const Comment = require('../models/commentsModel');
+const Favorite = require('../models/favoriteModel');
 
 
 // @desc    Register a new user
@@ -149,15 +150,22 @@ const getUserComments = asyncHandler(async (req, res) => {
 })
 
 
+// @desc    View user comments
+// @route   POST api/users/:id/comments
+// @access  Private
+const getUserFavorites = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  const favorites = await Favorite.find({ user: user._id });
 
-const favoritePost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params._id);
-  const user = await User.findById(req.user._id);
-
-  user.favorites.push(post._id);
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
 
   res.status(200).json({
-    message: 'Post added to favorites!'
+    userId: user._id,
+    username: user.username,
+    favorites: favorites
   })
 })
 
@@ -168,5 +176,5 @@ module.exports = {
   getUser,
   getUserPosts,
   getUserComments,
-  favoritePost
+  getUserFavorites
 }

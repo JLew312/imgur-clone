@@ -3,7 +3,8 @@ const { registerUser,
         loginUser,
         getUser,
         getUserPosts,
-        getUserComments } = require('../../controllers/usersControllers');
+        getUserComments,
+        getUserFavorites } = require('../../controllers/usersControllers');
 
 const { protect,
         belongsToUser } = require('../../middleware/authMiddleware');
@@ -15,6 +16,6 @@ router.post('/login', loginUser);
 router.get('/me', protect, getUser);
 router.get('/:id/posts', getUserPosts);
 router.get('/:id/comments', protect, getUserComments);
-// router.put('/:id/favorites', protect, favoritePost);
+router.get('/:id/favorites', protect, getUserFavorites);
 
 module.exports = router;
