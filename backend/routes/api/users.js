@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post('/', registerUser);
 router.post('/login', loginUser);
-router.get('/:id', protect, getUserInfo);
+router.get('/:id/about', protect, getUserInfo);
 router.get('/:id/posts', getUserPosts);
 router.get('/:id/comments', protect, getUserComments);
 router.get('/:id/favorites', protect, getUserFavorites);
