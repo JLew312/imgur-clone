@@ -6,6 +6,7 @@ const Post = require('../models/postModel');
 const PostImg = require('../models/postImgModel');
 const Comment = require('../models/commentsModel');
 
+
 // @desc    Register a new user
 // @route   POST api/users
 // @access  Public
@@ -49,6 +50,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 })
 
+
 // @desc    Authenticated and login user
 // @route   POST api/users
 // @access  Public
@@ -69,6 +71,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid credentials");
   }
 })
+
 
 // @desc    View user info
 // @route   POST api/users
@@ -125,8 +128,8 @@ const getUserPosts = asyncHandler(async (req, res) => {
 })
 
 
-// @desc    View user posts
-// @route   POST api/users/:id/posts
+// @desc    View user comments
+// @route   POST api/users/:id/comments
 // @access  Private
 const getUserComments = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
@@ -145,10 +148,25 @@ const getUserComments = asyncHandler(async (req, res) => {
   })
 })
 
+
+
+const favoritePost = asyncHandler(async (req, res) => {
+  const post = await Post.findById(req.params._id);
+  const user = await User.findById(req.user._id);
+
+  user.favorites.push(post._id);
+
+  res.status(200).json({
+    message: 'Post added to favorites!'
+  })
+})
+
+
 module.exports = {
   registerUser,
   loginUser,
   getUser,
   getUserPosts,
-  getUserComments
+  getUserComments,
+  favoritePost
 }

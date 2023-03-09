@@ -13,7 +13,8 @@ const router = express.Router();
 router.post('/', registerUser);
 router.post('/login', loginUser);
 router.get('/me', protect, getUser);
-router.get('/:id', getUserPosts);
+router.get('/:id/posts', getUserPosts);
 router.get('/:id/comments', protect, getUserComments);
+// router.put('/:id/favorites', protect, favoritePost);
 
 module.exports = router;
