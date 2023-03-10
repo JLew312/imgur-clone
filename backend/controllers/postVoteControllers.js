@@ -52,6 +52,38 @@ const upVotePost = asyncHandler(async (req, res) => {
   }
 })
 
+
+// @desc    Downvote a post
+// @route   POST api/gallery/:postId/downvote
+// @access  Public
+const downVotePost = asyncHandler(async (req, res) => {
+  let myVote = await PostVote.findOne({ user: req.user._id, post: req.params.id });
+  let votes = await PostVote.find({ post: req.params.id });
+  const voteCount = totalVotes(votes);
+
+  if (!myVote) {
+    await PostVote.create({
+      user: req.user._id,
+      post: req.params.id,
+      voteType: 'down'
+    })
+
+    votes = await PostVote.find({ post: req.params.id });
+    const newCount = totalVotes(votes);
+
+    res.status(200).json({
+      votes: newCount
+    })
+  } else {
+    res.status(200).json({
+      votes: voteCount
+    })
+  }
+})
+
+
+
 module.exports = {
-  upVotePost
+  upVotePost,
+  downVotePost
 }
