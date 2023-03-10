@@ -5,7 +5,8 @@ const { createPost,
         getAllPosts,
         favoritePost,
         deletePostById} = require('../../controllers/postsControllers');
-const { upVotePost } = require('../../controllers/postVoteControllers');
+const { upVotePost,
+        downVotePost } = require('../../controllers/postVoteControllers');
 
 const { protect,
         belongsToUser } = require('../../middleware/authMiddleware');
@@ -19,5 +20,7 @@ router.get('/', getAllPosts);
 router.post('/:id/favorite', protect, favoritePost);
 router.delete('/:id', protect, belongsToUser, deletePostById);
 router.post('/:id/upvote', protect, upVotePost);
+router.post('/:id/downvote', protect, downVotePost);
+
 
 module.exports = router;
