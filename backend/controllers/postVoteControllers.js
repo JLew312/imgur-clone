@@ -82,8 +82,28 @@ const downVotePost = asyncHandler(async (req, res) => {
 })
 
 
+// @desc    Remove an up/down vote
+// @route   POST api/gallery/:postId/removevote
+// @access  Public
+const removeVote = asyncHandler(async (req, res) => {
+  let myVote = await PostVote.findOne({ user: req.user._id, post: req.params.id });
+
+  if (!myVote) {
+    res.status(404);
+    throw new Error('No up/downvote found')
+  }
+
+  await PostVote.deleteOne({ user: req.user._id, post: req.params.id });
+
+  res.status(200).json({
+    statuscode: 200,
+    message: 'Vote removed'
+  })
+})
+
 
 module.exports = {
   upVotePost,
-  downVotePost
+  downVotePost,
+  removeVote
 }
