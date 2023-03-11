@@ -58,7 +58,9 @@ const getPostById = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id);
   const poster = await User.findById(post.user._id);
   const postImg = await PostImg.findOne({post});
-  const comments = await Comment.find({post})
+  const allComments = await Comment.find({post});
+
+  // HOW DO I DISPLAY ALL COMMENTS/REPLIES IN THEIR APPROPRIATE PLACES????
 
   if (post) {
     res.status(200).json({
@@ -70,8 +72,8 @@ const getPostById = asyncHandler(async (req, res) => {
       description: postImg.description,
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
-      'total comments': comments.length,
-      comments: comments
+      'total comments': allComments.length,
+      comments
     })
   } else {
     res.status(404);

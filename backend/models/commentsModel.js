@@ -8,8 +8,11 @@ const commentSchema = mongoose.Schema({
   },
   post: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: 'Post'
+  },
+  comment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment'
   },
   text: {
     type: String,

@@ -8,6 +8,7 @@ const { protect,
 const router = express.Router({ mergeParams: true });
 
 router.post('/', protect, createComment);
+router.post('/:commentId', protect, createComment);
 router.delete('/:commentId', protect, belongsToUser, deleteComment);
 
 module.exports = router;
