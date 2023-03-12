@@ -23,9 +23,9 @@ const createReply = asyncHandler(async (req, res) => {
     }
 
     await Comment.create(comment);
-    await Post.findOneAndUpdate({_id: req.params.postId}, { $push: { replies: comment }})
+    const updated = await Post.findOneAndUpdate({_id: req.params.postId}, { $push: { replies: comment }})
 
-    res.status(201).json(post)
+    res.status(201).json({updated})
 
   } else {
     const comment = {

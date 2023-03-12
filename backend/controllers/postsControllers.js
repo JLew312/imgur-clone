@@ -71,7 +71,7 @@ const getPostById = asyncHandler(async (req, res) => {
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
       'total comments': comments.length,
-      comments
+      comments: {comments}
     })
   } else {
     res.status(404);
