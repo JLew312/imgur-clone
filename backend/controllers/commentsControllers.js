@@ -7,55 +7,38 @@ const Comment = require('../models/commentsModel');
 // @desc    Create a new comment
 // @route   POST api/posts/:postId/comments
 // @access  Public
-const createComment = asyncHandler(async (req, res) => {
+const createReply = asyncHandler(async (req, res) => {
   const { text } = req.body;
   const user = await User.findById(req.user._id);
   const post = await Post.findById(req.params.postId);
   const parentComment = await Comment.findById(req.params.commentId);
 
-  if (!text) {
-    res.status(400);
-    throw new Error('Please add text to your comment!');
-  }
 
-  if (req.params.commentId) {
-    const comment = await Comment.create({
-      user: user._id,
-      post: null,
-      comment: parentComment._id,
-      text
-    })
-
-    if (comment) {
-      res.status(201).json({
-        _id: comment._id,
-        postId: comment.post,
-        commentId: comment.comment,
-        poster: user._id,
-        text: comment.text,
-        createdAt: comment.createdAt,
-        updatedAt: comment.updatedAt
-      });
-    }
-  } else {
-    const comment = await Comment.create({
+  if (!parentComment) {
+    const comment = {
       user: user._id,
       post: post._id,
       comment: null,
-      text
-    })
-
-    if (comment) {
-      res.status(201).json({
-        _id: comment._id,
-        postId: comment.post,
-        commentId: comment.comment,
-        poster: user._id,
-        text: comment.text,
-        createdAt: comment.createdAt,
-        updatedAt: comment.updatedAt
-      });
+      text,
     }
+
+    await Comment.create(comment);
+    await Post.findOneAndUpdate({_id: req.params.postId}, { $push: { replies: comment }})
+
+    res.status(201).json(post)
+
+  } else {
+    const comment = {
+      user: user._id,
+      post: post._id,
+      comment: parentComment._id,
+      text,
+    }
+
+    await Comment.create(comment);
+    const updated = await Comment.findOneAndUpdate({_id: req.params.commentId}, { $push: { replies: comment }})
+
+    res.status(201).json({updated})
   }
 })
 
@@ -80,6 +63,6 @@ const deleteComment = asyncHandler(async (req, res) => {
 })
 
 module.exports = {
-  createComment,
+  createReply,
   deleteComment
 }

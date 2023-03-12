@@ -1,5 +1,5 @@
 const express = require('express');
-const { createComment,
+const { createReply,
         deleteComment } = require('../../controllers/commentsControllers');
 
 const { protect,
@@ -7,8 +7,8 @@ const { protect,
 
 const router = express.Router({ mergeParams: true });
 
-router.post('/', protect, createComment);
-router.post('/:commentId', protect, createComment);
+router.post('/', protect, createReply);
+router.post('/:commentId/comments', protect, createReply);
 router.delete('/:commentId', protect, belongsToUser, deleteComment);
 
 module.exports = router;
