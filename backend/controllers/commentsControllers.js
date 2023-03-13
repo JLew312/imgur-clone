@@ -13,33 +13,23 @@ const createReply = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.postId);
   const parentComment = await Comment.findById(req.params.commentId);
 
+  let comment;
 
-  if (!parentComment) {
-    const comment = {
-      user: user._id,
-      post: post._id,
-      comment: null,
-      text,
-    }
-
-    await Comment.create(comment);
-    const updated = await Post.findOneAndUpdate({_id: req.params.postId}, { $push: { replies: comment }})
-
-    res.status(201).json({updated})
-
+  if (!req.params.commentId) {
+    comment = await Comment.create({
+      author: user._id,
+      parent: post._id,
+      text: text,
+    })
   } else {
-    const comment = {
-      user: user._id,
-      post: post._id,
-      comment: parentComment._id,
-      text,
-    }
-
-    await Comment.create(comment);
-    const updated = await Comment.findOneAndUpdate({_id: req.params.commentId}, { $push: { replies: comment }})
-
-    res.status(201).json({updated})
+    comment = await Comment.create({
+      author: user._id,
+      parent: parentComment._id,
+      text: text,
+    })
   }
+
+  res.status(201).json(comment);
 })
 
 
