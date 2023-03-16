@@ -21,15 +21,23 @@ const createReply = asyncHandler(async (req, res) => {
       parent: post._id,
       text: text,
     })
+
   } else {
     comment = await Comment.create({
       author: user._id,
       parent: parentComment._id,
       text: text,
     })
+
+    await Comment.updateOne({_id: parentComment._id}, {$push: {replies: comment}});
   }
 
-  res.status(201).json(comment);
+  res.status(201).json({
+    id: comment._id,
+    author: comment.author,
+    parents: comment.breadCrumbs,
+    content: comment.text
+  });
 })
 
 

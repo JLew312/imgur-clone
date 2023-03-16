@@ -50,42 +50,6 @@ const createPost = asyncHandler(async (req, res) => {
   }
 })
 
-const getComments = (req, res) => {
-  Comment.find({postId: '1'}).sort({postedDate: 1}).lean().exec()
-  .then(comments => {
-      let rec = (comment, threads) => {
-          for (var thread in threads) {
-              value = threads[thread];
-
-              if (thread.toString() === comment.parentId.toString()) {
-                  value.children[comment._id] = comment;
-                  return;
-              }
-
-              if (value.children) {
-                  rec(comment, value.children)
-              }
-          }
-      }
-      let threads = {}, comment
-      for (let i=0; i<comments.length; i++) {
-          comment = comments[i]
-          comment['children'] = {}
-          let parentId = comment.parentId
-          if (!parentId) {
-              threads[comment._id] = comment
-              continue
-          }
-          rec(comment, threads)
-      }
-      res.json({
-          'count': comments.length,
-          'comments': threads
-      })
-  })
-  .catch(err => res.status(500).json({error: err}))
-}
-
 
 // @desc    Get post info by id
 // @route   GET api/gallery/:id
@@ -94,69 +58,33 @@ const getPostById = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id);
   const poster = await User.findById(post.user._id);
   const postImg = await PostImg.findOne({post});
-  // const comments = await Comment.find({post});
+  const comments = await Comment.find({id: req.params.id});
 
-  await Comment.find({postId: '4'}).sort({postedDate: 1}).lean().exec()
-  .then(comments => {
-    let rec = (comment, threads) => {
-      for (var thread in threads) {
-        value = threads[thread];
+  const threads = [];
 
-        if (thread.toString() === comment.parentId.toString()) {
-          value.children[comment._id] = comment;
-          return;
-        }
-
-        if (value.children) {
-          rec(comment, value.children)
-        }
-      }
+  for await (let comment of comments) {
+    if ((comment.parent).valueOf() === (post._id).valueOf()) {
+      threads.push(comment);
     }
+  }
 
-    let threads = {}, comment
-    for (let i = 0; i < comments.length; i++) {
-      comment = comments[i]
-      comment['children'] = {}
-      let parentId = comment.parentId
-      if (!parentId) {
-          threads[comment._id] = comment
-          continue
-      }
-      rec(comment, threads)
-    }
-
-    res.status(201).json({
-    id: post._id,
-    posterId: poster._id,
-    poster: poster.username,
-    title: post.title,
-    image: postImg.image,
-    description: postImg.description,
-    createdAt: post.createdAt,
-    updatedAt: post.updatedAt,
-      'count': comments.length,
-      'comments': threads
+  if (post) {
+    res.status(200).json({
+      id: post._id,
+      posterId: poster._id,
+      poster: poster.username,
+      title: post.title,
+      image: postImg.image,
+      description: postImg.description,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      'total replies': comments.length,
+      threads
     })
-  })
-  .catch(err => res.status(500).json({error: err}))
-
-  // if (post) {
-  //   res.status(200).json({
-  //     id: post._id,
-  //     posterId: poster._id,
-  //     poster: poster.username,
-  //     title: post.title,
-  //     image: postImg.image,
-  //     description: postImg.description,
-  //     createdAt: post.createdAt,
-  //     updatedAt: post.updatedAt,
-  //     'total comments': comments.length,
-  //     comments
-  //   })
-  // } else {
-  //   res.status(404);
-  //   throw new Error('Post does not exist');
-  // }
+  } else {
+    res.status(404);
+    throw new Error('Post does not exist');
+  }
 })
 
 

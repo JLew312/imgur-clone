@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-// const { repliesSchema } = require('./repliesModel');
 
 const commentSchema = mongoose.Schema({
   author: {
@@ -9,15 +8,15 @@ const commentSchema = mongoose.Schema({
   },
   parent: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Post'
+    required: true
   },
-  depth: {
-    type: Number,
-    default: 1
-},
   text: {
     type: String,
     required: [true, 'Please type comment']
+  },
+  replies: {
+    type: Array,
+    default: []
   }
 }, {
   timestamps: true
