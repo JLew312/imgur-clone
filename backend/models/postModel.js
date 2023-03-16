@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+// const { commentSchema } = require('./commentsModel');
 
 const postSchema = mongoose.Schema({
   user: {
@@ -9,7 +10,11 @@ const postSchema = mongoose.Schema({
   title: {
     type: String,
     required: [true, 'Please add post title']
-  }
+  },
+  // replies: {
+  //   type: Array,
+  //   default: []
+  // }
 }, {
   timestamps: true
 })
